@@ -5,6 +5,8 @@ const defaultLinks = [
   { label: "About", href: "/about" },
   { label: "Services", href: "/services" },
   { label: "Contact", href: "/contact" },
+  { label: "SignUp", href: "/signup"},
+  { label: "SignIn", href: "/signin"}
 ];
 
 export default function NavBar({ links = defaultLinks, brand = "TodoApp" }) {

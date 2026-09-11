@@ -1,4 +1,3 @@
-import React from "react";
 import { Trash2, Check } from "lucide-react";
 import { Todo } from "../../Types/types";
 
