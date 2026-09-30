@@ -3,7 +3,7 @@ import mongoose, { Schema, model, Document } from "mongoose";
 export interface ITodo extends Document{
     title: string;
     description?: string;
-    completed: boolean;
+    done: boolean;
     userId: mongoose.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
@@ -22,7 +22,7 @@ const TodoSchema = new Schema <ITodo>(
             trim: true,
             maxlength: [500, "Description cannot exceed 500 characters"]
         },
-    completed: {
+    done: {
         type: Boolean,
         default: false
     },
