@@ -8,7 +8,7 @@ export interface Todo {
     done?: boolean;
 }
 
-export interface getTodoResponse {
+export interface TodoResponse {
     success: boolean;
     count: number;
     data: Todo[];
