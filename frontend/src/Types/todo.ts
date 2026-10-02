@@ -4,8 +4,8 @@ export interface Todo {
     _id: string;
     title: string;
     description?: string;
+    done: boolean;
     userId: string;
-    done?: boolean;
 }
 
 export interface TodoResponse {
@@ -13,3 +13,10 @@ export interface TodoResponse {
     count: number;
     data: Todo[];
 }
+
+export type ApiResponse<T> = {
+    success: boolean;
+    count?: number;
+    data: T;
+    message?: string;
+};

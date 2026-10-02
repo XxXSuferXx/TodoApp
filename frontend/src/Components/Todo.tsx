@@ -1,15 +1,12 @@
 import { useState } from "react";
 import useInput from "../Hooks/useInput";
 import type { Todo } from "../Types/todo";
+import useTodos from "../Hooks/useTodos";
 
-const USER_ID = "a";
+const USER_ID = '6a651fb721ad29ec31a4871a';
 
 function TodoList() {
-    const [todos, setTodos] = useState<Todo[]>([
-        { _id: "aa", userId: "a", title: "first", done: false },
-        { _id: "bb", userId: "b", title: "second", done: false },
-        { _id: "cc", userId: "c", title: "third", done: false },
-    ]);
+    const { todos, setTodos, loading, error: loadError, deleteTodo: removeTodo } = useTodos(USER_ID);
 
     const todoInput = useInput("");
     const [error, setError] = useState("");
@@ -55,8 +52,13 @@ function TodoList() {
         );
     }
 
-    function deleteTodo(id: string) {
-        setTodos(todos.filter((todo) => todo._id !== id));
+    async function deleteTodo(id: string) {
+         try {
+            setError("");
+            await removeTodo(id);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Something went wrong");
+        }
     }
 
     function handleKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -64,6 +66,9 @@ function TodoList() {
             addTodo();
         }
     }
+
+    if (loading) return <p className="text-white">Loading...</p>;
+    if (loadError) return <p className="text-red-500">{loadError}</p>;
 
     return (
         <div className=" bg-slate-800 text-white flex justify-center gap-4 py-50">
@@ -88,7 +93,7 @@ function TodoList() {
                         <li key={todo._id} className=" flex gap-2 items-center">
                             <span className={todo.done ? "line-through text-yellow-400" : ""}>
                                 {todo.title}
-                            </span>
+                            </span> 
                             <input
                                 type="checkbox"
                                 checked={todo.done}
