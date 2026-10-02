@@ -4,9 +4,12 @@ import mongoose from "mongoose";
 import authRoutes from "./routes/authRoutes.js";
 import dotenv from "dotenv";
 import todoRoutes from "./routes/todoRoutes.js"
+import cors from 'cors';
 
 dotenv.config();
 const app = express();
+
+app.use(cors());
 
 mongoose.connect(process.env.MONGODB_URL as string)
   .then(() => console.log("Connected to MongoDB Atlas"))
