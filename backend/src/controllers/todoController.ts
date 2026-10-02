@@ -75,7 +75,7 @@ export const deleteTodo = async (req: Request, res: Response) => {
         return res.status(200).json({
             success: true,
             message: "Todo deleted successfully",
-            data: deleteTodo
+            data: deletedTodo
         })
 
     } catch(error: any) {
