@@ -6,6 +6,6 @@ const router = Router();
 
 router.post("/todos", authMiddleware, addTodo);
 router.get("/todos/:userId",getTodo);
-router.delete("/todos/:userId/:todoId", authMiddleware, deleteTodo);
+router.delete("/todos/:userId/:todoId", deleteTodo);
 
 export default router;
