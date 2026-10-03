@@ -51,13 +51,48 @@ function useTodos(userId: string) {
             throw new Error(body.message ?? `Server responded with ${res.status}`);
         }
 
-        setTodos(todos.filter((todo) => todo._id !== id)); // only after success
+        setTodos(todos.filter((todo) => todo._id !== id));
     } catch (err) {
-        // show the failure somewhere
+        console.log(err);
     }
 }
 
-    return { todos, setTodos, loading, error, deleteTodo };
+    async function addTodo({userId, title, description}: Todo) {
+        try{
+            const res = await fetch(`${API}/todos`,{
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ userId, title, description }),
+            })  
+            const resBody: ApiResponse<Todo> = await res.json();
+
+            if (!res.ok) {
+                throw new Error(resBody.message ?? `Server responded with ${res.status}`);
+            }
+            setTodos((prev) => [...prev, resBody.data])
+        } catch (err) {
+            console.log("Failed to create Todo", err);
+        }
+    }
+
+    async function completed(id: string) {
+       try {
+        const res = await fetch(`${API}/todos/${userId}/${id}`, {
+            method: "PATCH"
+        })
+        const resBody: ApiResponse<Todo> = await res.json();
+
+        if (!res.ok) {
+            throw new Error(resBody.message ?? `Server responded with ${res.status}`);
+        }
+        
+        setTodos((prev) => prev.map((t) => (t._id === id ? resBody.data : t)));
+        } catch (err) {
+            console.error("Failed to toggle todo", err);
+        }
+    }
+
+    return { todos, setTodos, loading, error, deleteTodo, addTodo, completed };
 }
 
 export default useTodos;

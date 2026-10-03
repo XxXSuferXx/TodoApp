@@ -6,12 +6,12 @@ import useTodos from "../Hooks/useTodos";
 const USER_ID = '6a651fb721ad29ec31a4871a';
 
 function TodoList() {
-    const { todos, setTodos, loading, error: loadError, deleteTodo: removeTodo } = useTodos(USER_ID);
+    const { todos, setTodos, loading, error: loadError, deleteTodo: removeTodo, addTodo: createTodo, completed } = useTodos(USER_ID);
 
     const todoInput = useInput("");
     const [error, setError] = useState("");
 
-    function addTodo() {
+    async function addTodo() {
         const trimmed = todoInput.value.trim();
         if (trimmed === "") {
             setError("Todo can't be empty");
@@ -34,7 +34,8 @@ function TodoList() {
             done: false,
         };
 
-        setTodos([...todos, newTodo]);
+        await createTodo(newTodo);
+
         todoInput.reset();
         setError("");
     }
@@ -42,14 +43,6 @@ function TodoList() {
     function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
         todoInput.onChange(e);
         if (error) setError("");
-    }
-
-    function toggleTodo(id: string) {
-        setTodos(
-            todos.map((todo) =>
-                todo._id === id ? { ...todo, done: !todo.done } : todo
-            )
-        );
     }
 
     async function deleteTodo(id: string) {
@@ -97,7 +90,7 @@ function TodoList() {
                             <input
                                 type="checkbox"
                                 checked={todo.done}
-                                onChange={() => toggleTodo(todo._id)}
+                                onChange={() => completed(todo._id)}
                             />
                             <button
                                 onClick={() => deleteTodo(todo._id)}
