@@ -1,12 +1,17 @@
 import { type Request, type Response } from "express";
 import { Todo } from "../modals/todoSchema.js";
-import { Types } from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export const addTodo = async (req: Request, res: Response)=> {
     try{
-        const userId = req.body.userId;
-        const title = req.body.title;
-        const description = req.body.description;   
+        const {userId, title, description} = req.body;
+
+        if (!Types.ObjectId.isValid(userId)) {
+            return res.status(400).json({ success: false, message: "Valid userId is required" });
+        }
+        if (typeof title !== "string" || !title.trim()) {
+            return res.status(400).json({ success: false, message: "Title is required" });
+        }
 
         const newTodo = await Todo.create({
             title,
@@ -21,11 +26,9 @@ export const addTodo = async (req: Request, res: Response)=> {
         });
 
     } catch(error: any) {
-        return res.status(500).json({
-            success: false,
-            message: "Failed to create Todo",
-            error: error.message
-        });
+        if (error instanceof mongoose.Error.ValidationError) {
+            return res.status(400).json({ success: false, message: error.message });
+        }
     }
 }
 
