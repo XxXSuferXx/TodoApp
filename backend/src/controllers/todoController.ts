@@ -89,3 +89,41 @@ export const deleteTodo = async (req: Request, res: Response) => {
         })
     }
 }
+
+export const toggleTodo = async (req: Request, res: Response) => {
+    try {
+        const {userId, todoId} = req.params as { userId: string; todoId: string };
+
+        if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(todoId)) {
+            return res.status(400).json({ success: false, message: "Invalid id" });
+        }
+
+        const todo = await Todo.findOne({
+            _id: todoId,
+            userId
+        })
+
+        if(!todo) {
+            return res.status(404).json({
+                success: false,
+                message: "Todo not found or unauthorized"
+            })
+        }
+
+        todo.done = !todo.done;
+        await todo.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Todo updated successfully",
+            data: todo,
+        });
+
+    } catch(err: any) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error",
+            error: err.message
+        })
+    }
+}
