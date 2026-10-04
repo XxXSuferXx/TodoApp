@@ -2,6 +2,8 @@ import { useState } from "react";
 import useInput from "../Hooks/useInput";
 import type { Todo } from "../Types/todo";
 import useTodos from "../Hooks/useTodos";
+import { Link } from "react-router-dom";
+import { todoDetailPath } from "../routes";
 
 const USER_ID = '6a651fb721ad29ec31a4871a';
 
@@ -84,9 +86,12 @@ function Todos() {
                 <ul className=" space-y-2">
                     {todos.map((todo) => (
                         <li key={todo._id} className=" flex gap-2 items-center">
-                            <span className={todo.done ? "line-through text-yellow-400" : ""}>
+                            <Link
+                                to={todoDetailPath(todo._id)}
+                                className={todo.done ? "line-through text-yellow-400" : "hover:underline"}
+                            >
                                 {todo.title}
-                            </span> 
+                            </Link>
                             <input
                                 type="checkbox"
                                 checked={todo.done}

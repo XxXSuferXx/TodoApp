@@ -6,6 +6,7 @@ import Admin from "./pages/Admin"
 import Login from "./pages/Login"
 import NotFound from "./pages/NotFound"
 import Todos from "./pages/Todos"
+import TodoDetail from "./pages/TodoDetail"
 
 function App() {
 
@@ -16,6 +17,7 @@ function App() {
         <Route path={ROUTES.todos} element={<Todos />} />
         <Route path={ROUTES.login} element={<Login />} />
         <Route path={ROUTES.admin} element={<Admin />} />
+        <Route path={ROUTES.todoDetail} element={<TodoDetail/>}/>
         <Route path="*" element={<NotFound />} />
       </Route>
     </Routes>
