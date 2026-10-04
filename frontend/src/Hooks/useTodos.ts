@@ -92,7 +92,7 @@ function useTodos(userId: string) {
         }
     }
 
-    return { todos, setTodos, loading, error, deleteTodo, addTodo, completed };
+    return { todos, loading, error, deleteTodo, addTodo, completed };
 }
 
 export default useTodos;

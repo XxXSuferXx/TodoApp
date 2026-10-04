@@ -6,7 +6,7 @@ import useTodos from "../Hooks/useTodos";
 const USER_ID = '6a651fb721ad29ec31a4871a';
 
 function TodoList() {
-    const { todos, setTodos, loading, error: loadError, deleteTodo: removeTodo, addTodo: createTodo, completed } = useTodos(USER_ID);
+    const { todos, loading, error: loadError, deleteTodo: removeTodo, addTodo: createTodo, completed } = useTodos(USER_ID);
 
     const todoInput = useInput("");
     const [error, setError] = useState("");
