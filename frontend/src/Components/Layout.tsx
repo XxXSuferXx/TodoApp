@@ -11,8 +11,8 @@ function Layout() {
     return (
         <div className = " bg-slate-700 min-h-screen">
             <nav className = " bg-slate-700 flex gap-4 p-4 border-b border-slate-500">
-                <NavLink to={ROUTES.home} className = {linkClass}> Home </NavLink>
-                <NavLink to={ROUTES.todos} className = {linkClass}> Todos</NavLink>
+                <NavLink to={ROUTES.home} className={linkClass}> Home </NavLink>
+                <NavLink to={ROUTES.todos} className={linkClass}> Todos</NavLink>
                 <NavLink to={ROUTES.login} className={linkClass}>Login</NavLink>
                 <NavLink to={ROUTES.admin} className={linkClass}>Admin</NavLink>
             </nav>
