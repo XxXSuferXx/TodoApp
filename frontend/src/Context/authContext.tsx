@@ -25,6 +25,7 @@ export function AuthProvider({children }: {children: ReactNode }) {
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     const data = await loginRequest(credentials);
+    console.log("signin data:", data);
     setUser(data.user);
     setToken(data.token);
   }, []);
