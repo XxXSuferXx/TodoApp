@@ -66,7 +66,7 @@ export const signin = async (req: Request, res: Response) => {
         if(!existingUser || !isPasswordValid) {
             return res.status(401).json({
                 success: false,
-                message: "Invalid email or password"
+                message: "Invalid username or password"
             });
         }
 
@@ -82,12 +82,12 @@ export const signin = async (req: Request, res: Response) => {
             message: "SignIn successful",
             data: {
                 user: {
-                    id: existingUser,
+                    id: existingUser._id,
                     username: existingUser.username,
                     role: existingUser.role
-                }
+                },
+                token: token,
             },
-            token: token
         })
 
     } catch(error: any) {
