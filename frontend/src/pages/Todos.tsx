@@ -12,7 +12,7 @@ function Todos() {
 
     const todoInput = useInput("");
     const [error, setError] = useState("");
-
+    
     async function addTodo() {
         const trimmed = todoInput.value.trim();
         if (trimmed === "") {
@@ -35,11 +35,15 @@ function Todos() {
             title: trimmed,
             done: false,
         };
+        try {
+            await createTodo(newTodo);
 
-        await createTodo(newTodo);
-
-        todoInput.reset();
-        setError("");
+            todoInput.reset();
+            setError("");
+        } catch (err) {
+            setError(err instanceof Error? err.message: "Something went wrong");
+        }
+        
     }
 
     function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
@@ -51,6 +55,15 @@ function Todos() {
          try {
             setError("");
             await removeTodo(id);
+        } catch (err) {
+            setError(err instanceof Error ? err.message : "Something went wrong");
+        }
+    }
+
+    async function toggleTodo(id: string) {
+        try {
+            setError("");
+            await completed(id);
         } catch (err) {
             setError(err instanceof Error ? err.message : "Something went wrong");
         }
@@ -95,7 +108,7 @@ function Todos() {
                             <input
                                 type="checkbox"
                                 checked={todo.done}
-                                onChange={() => completed(todo._id)}
+                                onChange={() => toggleTodo(todo._id)}
                             />
                             <button
                                 onClick={() => deleteTodo(todo._id)}

@@ -2,7 +2,7 @@
 export const ROUTES = {
     home: "/",
     todos: "/todos",
-    todoDetail: "/todos/:todos",
+    todoDetail: "/todos/:todoId",
     login: "/login",
     admin: "admin",
 } as const;

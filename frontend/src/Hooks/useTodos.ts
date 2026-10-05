@@ -51,9 +51,10 @@ function useTodos(userId: string) {
             throw new Error(body.message ?? `Server responded with ${res.status}`);
         }
 
-        setTodos(todos.filter((todo) => todo._id !== id));
+        setTodos((prev) => prev.filter((todo) => todo._id !== id));
     } catch (err) {
-        console.log(err);
+        console.error("Failed to delete todo", err);
+        throw err; 
     }
 }
 
@@ -72,6 +73,7 @@ function useTodos(userId: string) {
             setTodos((prev) => [...prev, resBody.data])
         } catch (err) {
             console.log("Failed to create Todo", err);
+            throw err;
         }
     }
 
@@ -89,6 +91,7 @@ function useTodos(userId: string) {
         setTodos((prev) => prev.map((t) => (t._id === id ? resBody.data : t)));
         } catch (err) {
             console.error("Failed to toggle todo", err);
+            throw err;
         }
     }
 
