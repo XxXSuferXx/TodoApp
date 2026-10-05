@@ -3,7 +3,7 @@ import {User} from "../modals/userSchema.js";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 
-export const signup = async (req: Request, res: Response) => {
+export const register = async (req: Request, res: Response) => {
     try{
         const { username, password } = req.body;
 
@@ -48,7 +48,7 @@ export const signup = async (req: Request, res: Response) => {
     }
 };
 
-export const signin = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
     try {
         const { username, password } = req.body;
 
@@ -58,25 +58,32 @@ export const signin = async (req: Request, res: Response) => {
                 message: "Bad Request: Username or Password are required"
             });
         }
+       
+        const existingUser = await User.findOne({username}).select("+password");
 
-        const existingUser = await User.findOne({username});
-
-        const isPasswordValid = existingUser && await bcrypt.compare(password, existingUser.password);
-
+        if (!existingUser) {
+            return res.status(401).json({
+                success: false,
+                message: "Invalid credentials" 
+            });
+        }
+        
+        const isPasswordValid = await bcrypt.compare(password, existingUser.password);
+        
         if(!existingUser || !isPasswordValid) {
             return res.status(401).json({
                 success: false,
                 message: "Invalid username or password"
             });
         }
-
+        
         const token = jwt.sign({
             userId: existingUser._id,
             username: existingUser.username,
             role: existingUser.role
         }, process.env.JWT_SECRET as string,
         { expiresIn: "1h" });
-
+        
         return res.status(200).json({
             success: true,
             message: "SignIn successful",
