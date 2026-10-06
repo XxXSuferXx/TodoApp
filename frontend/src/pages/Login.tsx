@@ -3,10 +3,14 @@ import { useNavigate } from "react-router-dom";
 import { ROUTES } from "../routes";
 import useInput from "../Hooks/useInput";
 import { useAuth } from "../Context/authContext";
+import { useLocation } from "react-router-dom";
 
 
 function Login() {
     const navigate = useNavigate();
+    const location = useLocation();
+    const expired = (location.state as { reason?: string } | null)?.reason === "expired";
+
     const { login } = useAuth();
     const username = useInput("");
     const password = useInput("");
@@ -48,6 +52,7 @@ function Login() {
     return (
         <div className = " bg-slate-800 min-h-screen text-white">
             <div>
+                {expired && <p className="text-yellow-400">Your session expired. Please sign in again.</p>}
                 <form onSubmit ={handleSubmit} className =" flex flex-col gap-2">
                     <input value = {username.value} onChange = {handleUsernameChange} placeholder="userName"/>
                     <input value = {password.value} onChange = {handlePasswordChange} placeholder="passWord"/>

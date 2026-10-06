@@ -2,13 +2,16 @@ import { useState } from "react";
 import useInput from "../Hooks/useInput";
 import type { Todo } from "../Types/todo";
 import useTodos from "../Hooks/useTodos";
-import { Link } from "react-router-dom";
-import { todoDetailPath } from "../routes";
+import { Link, Navigate, useNavigate } from "react-router-dom";
+import { ROUTES, todoDetailPath } from "../routes";
+import { useAuth } from "../Context/authContext";
 
 const USER_ID = '6a651fb721ad29ec31a4871a';
 
 function Todos() {
-    const { todos, loading, error: loadError, deleteTodo: removeTodo, addTodo: createTodo, completed } = useTodos(USER_ID);
+    const navigate = useNavigate();
+    const { user, isAuthenticated, logout } = useAuth();
+    const { todos, loading, error: loadError, deleteTodo: removeTodo, addTodo: createTodo, completed } = useTodos();
 
     const todoInput = useInput("");
     const [error, setError] = useState("");
@@ -74,6 +77,13 @@ function Todos() {
             addTodo();
         }
     }
+     function handleLogout() {
+        logout();
+        navigate(ROUTES.login, { replace: true });
+    }
+    if (!isAuthenticated) {
+        return <Navigate to={ROUTES.login} replace state={{ reason: "expired" }} />;
+    }
 
     if (loading) return <p className="text-white">Loading...</p>;
     if (loadError) return <p className="text-red-500">{loadError}</p>;
@@ -81,6 +91,12 @@ function Todos() {
     return (
         <div className=" bg-slate-800 text-white flex justify-center gap-4 py-50">
             <div className=" flex flex-col gap-4">
+                <div className="flex justify-between items-center">
+                    <span>Signed in as {user?.username}</span>
+                    <button onClick={handleLogout} className="rounded bg-slate-600 px-2">
+                        Logout
+                    </button>
+                </div>
                 <div className=" flex gap-4">
                     <input
                         value={todoInput.value}

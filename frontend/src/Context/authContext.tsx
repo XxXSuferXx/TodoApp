@@ -9,35 +9,41 @@ import {
 
 import { loginRequest } from "../Services/authApi";
 import type { LoginCredentials, User } from "../Types/Auth";
+import { clearAuth, loadAuth, saveAuth, type StoredAuth } from "../Services/authStorage";
 
 interface AuthContextValue {
   user: User | null;
   token: string | null;
   isAuthenticated: boolean;
   login: ( credentials: LoginCredentials ) => Promise<void>;
+  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
 export function AuthProvider({children }: {children: ReactNode }) {
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string | null>(null);
+  const [auth, setAuth] = useState<StoredAuth | null>(() => loadAuth());
 
   const login = useCallback(async (credentials: LoginCredentials) => {
     const data = await loginRequest(credentials);
-    console.log("signin data:", data);
-    setUser(data.user);
-    setToken(data.token);
+    saveAuth({ user: data.user, token: data.token });
+    setAuth({ user: data.user, token: data.token });
   }, []);
+
+   const logout = useCallback(() => {
+      clearAuth();
+      setAuth(null);
+    }, []);
 
   const value = useMemo<AuthContextValue>(
     () => ({
-      user,
-      token,
-      isAuthenticated: user !== null && token !== null,
+      user: auth?.user ?? null,
+      token: auth?.token ?? null,
+      isAuthenticated: auth !== null,
       login,
+      logout,
     }),
-    [user, token, login]
+    [auth, login, logout]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

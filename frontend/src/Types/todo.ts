@@ -17,5 +17,10 @@ export interface TodoResponse {
 export type ApiResponse<T> = {
     success: boolean;
     message: string;
-    data?: T;
+    data: T;
 };
+
+export type NewTodoInput = {
+    title:string;
+    description?: string;
+}

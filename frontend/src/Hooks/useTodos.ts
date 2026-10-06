@@ -1,99 +1,52 @@
 import { useEffect, useState } from "react";
-import type { ApiResponse, Todo } from "../Types/todo";
+import type { ApiResponse, NewTodoInput, Todo } from "../Types/todo";
+import useApi from "./useApi";
 
-const API = "http://localhost:3000/api/v1";
-
-function useTodos(userId: string) {
-
+function useTodos() {
+    const api = useApi();
     const [todos, setTodos] = useState<Todo[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
 
     useEffect(()=> {
         const controller = new AbortController();
-        async function loadTodos() {
+        (async () => {
             try {
-            setLoading(true);
-            setError(null);
-
-            const res = await fetch(`${API}/todos/${userId}`, {
-                signal: controller.signal
-            })
-            const body = await res.json();
-
-            if(!res.ok) {
-                throw new Error(body.message?? `Server responded with ${res.status}`)
-            }
-           
-            setTodos(body.data);
-            } catch(err) {
+                setLoading(true);
+                setError(null);
+                const body = await api<Todo[]>("/todos", { signal: controller.signal });
+                setTodos(body.data as Todo[]);
+            } catch (err) {
                 if (err instanceof DOMException && err.name === "AbortError") return;
-                setError(err instanceof Error ? err.message : "Something went wrong")
+                setError(err instanceof Error ? err.message : "Something went wrong");
             } finally {
                 if (!controller.signal.aborted) setLoading(false);
             }
-        }
-        
-        loadTodos();
-        return () => controller.abort();
-    },[userId]);
+        })();
+    return () => controller.abort();
+}, [api]);
 
     async function deleteTodo(id: string) {
-    try {
-        const res = await fetch(`${API}/todos/${userId}/${id}`, {
-            method: "DELETE",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ userId }),
-        });
-        const body: ApiResponse<Todo> = await res.json();
+        await api<Todo>(`/todos/${id}`, { method: "DELETE" });
+        setTodos((prev) => prev.filter((t) => t._id !== id));
+  }
 
-        if (!res.ok) {
-            throw new Error(body.message ?? `Server responded with ${res.status}`);
-        }
-
-        setTodos((prev) => prev.filter((todo) => todo._id !== id));
-    } catch (err) {
-        console.error("Failed to delete todo", err);
-        throw err; 
-    }
-}
-
-    async function addTodo({userId, title, description}: Todo) {
-        try{
-            const res = await fetch(`${API}/todos`,{
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ userId, title, description }),
-            })  
-            const resBody: ApiResponse<Todo> = await res.json();
-
-            if (!res.ok) {
-                throw new Error(resBody.message ?? `Server responded with ${res.status}`);
-            }
-            setTodos((prev) => [...prev, resBody.data])
-        } catch (err) {
-            console.log("Failed to create Todo", err);
-            throw err;
-        }
+    async function addTodo({ title, description }: NewTodoInput) {
+        const body = await api<Todo>(`/todos`, {
+            method: "POST",
+            body: JSON.stringify({ title, description })
+            });
+        setTodos((prev)=> [...prev, body.data])    
     }
 
     async function completed(id: string) {
-       try {
-        const res = await fetch(`${API}/todos/${userId}/${id}`, {
-            method: "PATCH"
-        })
-        const resBody: ApiResponse<Todo> = await res.json();
+        const body = await api<Todo>(`/todos/${id}`, {method: "PATCH"});
+       
+        const updated = body.data;
+        if (!updated) throw new Error("Server returned no todo");
+        setTodos((prev) => prev.map((t) => (t._id === id ? updated : t)));
 
-        if (!res.ok) {
-            throw new Error(resBody.message ?? `Server responded with ${res.status}`);
         }
-        
-        setTodos((prev) => prev.map((t) => (t._id === id ? resBody.data : t)));
-        } catch (err) {
-            console.error("Failed to toggle todo", err);
-            throw err;
-        }
-    }
 
     return { todos, loading, error, deleteTodo, addTodo, completed };
 }

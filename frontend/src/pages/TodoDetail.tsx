@@ -7,7 +7,7 @@ const USER_ID = "6a651fb721ad29ec31a4871a";
 
 function TodoDetail() {
   const { todoId } = useParams<{ todoId: string }>();
-  const { todos, loading, error } = useTodos(USER_ID);
+  const { todos, loading, error } = useTodos();
 
   if (!todoId) return <p>Missing todo id</p>;
   if (loading) return <p>Loading...</p>;
