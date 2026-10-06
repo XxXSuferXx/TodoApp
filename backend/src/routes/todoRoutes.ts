@@ -4,9 +4,9 @@ import { authMiddleware } from "../middlewares/authMiddleware.js";
 
 const router = Router();
 
-router.post("/todos", addTodo);
-router.get("/todos/:userId",getTodo);
-router.delete("/todos/:userId/:todoId", deleteTodo);
-router.patch("/todos/:userId/:todoId",toggleTodo);
+router.post("/todos", authMiddleware, addTodo);
+router.get("/todos", authMiddleware, getTodo);
+router.delete("/todos/:todoId", authMiddleware, deleteTodo);
+router.patch("/todos/:todoId", authMiddleware, toggleTodo);
 
 export default router;
