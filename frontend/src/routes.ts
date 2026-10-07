@@ -1,10 +1,10 @@
-
 export const ROUTES = {
     home: "/",
     todos: "/todos",
     todoDetail: "/todos/:todoId",
     login: "/login",
-    admin: "admin",
+    admin: "/admin",
+    forbidden: "/forbidden"
 } as const;
 
 export type AppRoute = (typeof ROUTES)[keyof typeof ROUTES]

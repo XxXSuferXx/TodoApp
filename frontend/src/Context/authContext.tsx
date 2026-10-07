@@ -8,7 +8,7 @@ import {
 } from "react";
 
 import { loginRequest } from "../Services/authApi";
-import type { LoginCredentials, User } from "../Types/Auth";
+import type { LoginCredentials, Role, User } from "../Types/Auth";
 import { clearAuth, loadAuth, saveAuth, type StoredAuth } from "../Services/authStorage";
 
 interface AuthContextValue {
@@ -17,6 +17,7 @@ interface AuthContextValue {
   isAuthenticated: boolean;
   login: ( credentials: LoginCredentials ) => Promise<void>;
   logout: () => void;
+  hasRole: (...roles: Role[]) => boolean;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
@@ -35,6 +36,11 @@ export function AuthProvider({children }: {children: ReactNode }) {
       setAuth(null);
     }, []);
 
+    const hasRole = useCallback(
+      (...roles: Role[]) => !!auth && roles.includes(auth.user.role),
+      [auth]
+    );
+
   const value = useMemo<AuthContextValue>(
     () => ({
       user: auth?.user ?? null,
@@ -42,8 +48,9 @@ export function AuthProvider({children }: {children: ReactNode }) {
       isAuthenticated: auth !== null,
       login,
       logout,
+      hasRole
     }),
-    [auth, login, logout]
+    [auth, login, logout, hasRole]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -2,15 +2,16 @@ import { useState } from "react";
 import useInput from "../Hooks/useInput";
 import type { Todo } from "../Types/todo";
 import useTodos from "../Hooks/useTodos";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { ROUTES, todoDetailPath } from "../routes";
 import { useAuth } from "../Context/authContext";
+import { ROLES } from "../utils/Roles";
 
 const USER_ID = '6a651fb721ad29ec31a4871a';
 
 function Todos() {
     const navigate = useNavigate();
-    const { user, isAuthenticated, logout } = useAuth();
+    const { user, logout, hasRole } = useAuth();
     const { todos, loading, error: loadError, deleteTodo: removeTodo, addTodo: createTodo, completed } = useTodos();
 
     const todoInput = useInput("");
@@ -81,9 +82,6 @@ function Todos() {
         logout();
         navigate(ROUTES.login, { replace: true });
     }
-    if (!isAuthenticated) {
-        return <Navigate to={ROUTES.login} replace state={{ reason: "expired" }} />;
-    }
 
     if (loading) return <p className="text-white">Loading...</p>;
     if (loadError) return <p className="text-red-500">{loadError}</p>;
@@ -93,6 +91,11 @@ function Todos() {
             <div className=" flex flex-col gap-4">
                 <div className="flex justify-between items-center">
                     <span>Signed in as {user?.username}</span>
+                    {hasRole(ROLES.ADMIN) && (
+                    <Link to={ROUTES.admin} className="rounded bg-yellow-600 px-2">
+                        Admin
+                    </Link>
+                    )}
                     <button onClick={handleLogout} className="rounded bg-slate-600 px-2">
                         Logout
                     </button>
