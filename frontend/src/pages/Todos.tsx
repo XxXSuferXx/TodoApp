@@ -7,8 +7,6 @@ import { ROUTES, todoDetailPath } from "../routes";
 import { useAuth } from "../Context/authContext";
 import { ROLES } from "../utils/Roles";
 
-const USER_ID = '6a651fb721ad29ec31a4871a';
-
 function Todos() {
     const navigate = useNavigate();
     const { user, logout, hasRole } = useAuth();
@@ -35,7 +33,7 @@ function Todos() {
 
         const newTodo: Todo = {
             _id: crypto.randomUUID(),
-            userId: USER_ID,
+            userId: user!.id,
             title: trimmed,
             done: false,
         };

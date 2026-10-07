@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { ApiResponse, NewTodoInput, Todo } from "../Types/todo";
+import type { NewTodoInput, Todo } from "../Types/todo";
 import useApi from "./useApi";
 
 function useTodos() {

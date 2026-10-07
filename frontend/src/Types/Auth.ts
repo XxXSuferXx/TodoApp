@@ -17,3 +17,9 @@ export interface LoginCredentials {
   username: string;
   password: string;
 }
+
+export interface AdminUser {
+    _id: string;
+    username: string;
+    role: Role;
+}
