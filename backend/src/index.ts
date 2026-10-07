@@ -6,6 +6,7 @@ import cors from 'cors';
 import { connectDB } from "./config/db.js";
 import authRoutes from "./routes/authRoutes.js";
 import todoRoutes from "./routes/todoRoutes.js";
+import adminRoutes from "./routes/adminRoutes.js";
 import { jsonErrorHandler } from "./middlewares/error.middleware.js";
 
 const app = express();
@@ -16,7 +17,8 @@ app.use(express.json());
 
 
 app.use("/api/v1/auth", authRoutes);
-app.use("/api/v1",todoRoutes);
+app.use("/api/v1", todoRoutes);
+app.use("/api/v1/admin", adminRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
